@@ -1,6 +1,6 @@
 function PageContent({ title, children }) {
   return (
-    <div>
+    <div className="">
       <h1>{title}</h1>
       {children}
     </div>

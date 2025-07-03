@@ -1,7 +1,7 @@
-import Home from './HomePage'
-import Error from './ErrorPage'
-import MealDetails from './MealDetailsPage'
-import Category from './CategoryPage'
+import HomePage from './HomePage'
+import ErrorPage from './ErrorPage'
+import MealDetailsPage from './MealDetailsPage'
+import CategoryPage from './CategoryPage'
 import SigninSignup from './SigninSignup'
 
-export { Home, Error, MealDetails, Category, SigninSignup }
+export { HomePage, ErrorPage, MealDetailsPage, CategoryPage, SigninSignup }

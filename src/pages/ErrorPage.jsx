@@ -2,6 +2,8 @@ import React from "react";
 import PageContent from "../components/PageContent";
 import { useRouteError } from "react-router-dom";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Sidebar from "../components/Sidebar";
 
 const ErrorPage = () => {
   const error = useRouteError();
@@ -20,9 +22,11 @@ const ErrorPage = () => {
   return (
     <>
       <Header />
+      <Sidebar />
       <PageContent title={title}>
         <p>{message}</p>
       </PageContent>
+      <Footer />
     </>
   );
 };

@@ -1,56 +1,57 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import MealSingle from "../components/MealSingle";
-import { useMealContext } from "../context/mealContext";
-import { startFetchSingleMeal } from "../actions/mealsActions";
-import Loader from "../components/Loader";
+import { useLoaderData } from "react-router-dom";
+import axios from "../api/axios";
+import { MEAL_SINGLE_URL } from "../utils/constants";
+
 
 const MealDetailsPage = () => {
   const { id } = useParams();
-  const { dispatch, meal, mealLoading } = useMealContext();
-
-  useEffect(() => {
-    startFetchSingleMeal(dispatch, id);
-  }, [id, dispatch]);
-
-  let ingredientsArr = [],
-    measuresArr = [],
-    singleMeal = {};
-
-  if (meal && meal.length > 0) {
-    for (let key in meal[0]) {
-      if (key.includes("strIngredient") && meal[0][key]) {
-        ingredientsArr.push(meal[0][key]);
-      }
-
-      if (key.includes("strMeasure")) {
-        const val = meal[0][key];
-        if (val && val.trim().length > 0) {
-          measuresArr.push(val);
-        }
-      }
-    }
-
-    singleMeal = {
-      id: meal[0].idMeal,
-      title: meal[0].strMeal,
-      category: meal[0].strCategory,
-      area: meal[0].strArea,
-      thumbnail: meal[0].strMealThumb,
-      instructions: meal[0].strInstructions,
-      source: meal[0].strSource,
-      tags: meal[0].strTags,
-      youtube: meal[0].strYoutube,
-      ingredients: ingredientsArr,
-      measures: measuresArr,
-    };
-  }
-
+  const singleMeal = useLoaderData();
   return (
     <main className="bg-gray-100 py-6">
-      {mealLoading ? <Loader /> : <MealSingle meal={singleMeal} />}
+      {/* {mealLoading ? <Loader /> : <MealSingle meal={singleMeal} />} */}
+      <MealSingle meal={singleMeal} />
     </main>
   );
 };
+
+export async function mealDetailsLoader({ params }) {
+  const id = params.id;
+  const response = await axios.get(`${MEAL_SINGLE_URL}${id}`);
+  const meal = response.data.meals?.[0];
+
+  if (!meal) {
+    throw new Response("Meal not found", { status: 404 });
+  }
+
+  const ingredients = [];
+  const measures = [];
+
+  for (let key in meal) {
+    if (key.startsWith("strIngredient") && meal[key]) {
+      ingredients.push(meal[key]);
+    }
+
+    if (key.startsWith("strMeasure") && meal[key]?.trim()) {
+      measures.push(meal[key]);
+    }
+  }
+
+  return {
+    id: meal.idMeal,
+    title: meal.strMeal,
+    category: meal.strCategory,
+    area: meal.strArea,
+    thumbnail: meal.strMealThumb,
+    instructions: meal.strInstructions,
+    source: meal.strSource,
+    tags: meal.strTags,
+    youtube: meal.strYoutube,
+    ingredients,
+    measures,
+  };
+}
 
 export default MealDetailsPage;
